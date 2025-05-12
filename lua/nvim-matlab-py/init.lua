@@ -11,6 +11,11 @@ M.setup = function(opts)
     vim.g.matlab_executable = opts.matlab_executable
   end
   
+  -- Configurar el puerto del servidor
+  if opts.server_port then
+    vim.g.matlab_server_port = opts.server_port
+  end
+  
   -- Configurar mapeos de teclas
   if opts.setup_keymaps == true then
     vim.keymap.set('n', '<leader>rr', ':MatlabRun<CR>', { noremap = true, silent = true })
@@ -18,6 +23,7 @@ M.setup = function(opts)
     vim.keymap.set('n', '<leader>rl', ':MatlabRunLine<CR>', { noremap = true, silent = true })
     vim.keymap.set('v', '<leader>rs', ':MatlabRunSelection<CR>', { noremap = true, silent = true })
     vim.keymap.set('n', '<leader>mt', ':MatlabToggleFile<CR>', { noremap = true, silent = true })
+    vim.keymap.set('n', '<leader>ms', ':MatlabStopServer<CR>', { noremap = true, silent = true })
   end
 end
 
@@ -40,6 +46,10 @@ end
 
 M.toggle_file = function()
   vim.cmd('MatlabToggleFile')
+end
+
+M.stop_server = function()
+  vim.cmd('MatlabStopServer')
 end
 
 return M
