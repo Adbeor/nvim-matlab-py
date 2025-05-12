@@ -12,23 +12,10 @@ if !exists('g:matlab_executable')
   endif
 endif
 
-if !exists('g:matlab_server_port')
-  let g:matlab_server_port = 0  " 0 = puerto aleatorio
-endif
-
-if !exists('g:matlab_debug_mode')
-  let g:matlab_debug_mode = 0  " 0 = desactivado, 1 = activado
-endif
-
 " Inicializar el plugin Python
 function! s:init_python() abort
   if has('nvim') && has('python3')
     python3 import nvim_matlab_py
-    
-    " Configurar modo de depuración
-    if g:matlab_debug_mode
-      python3 nvim_matlab_py.set_debug_mode(True)
-    endif
   else
     echohl ErrorMsg | echom "nvim-matlab-py requiere Neovim con soporte Python3" | echohl None
     finish
@@ -43,8 +30,19 @@ command! -range MatlabRunSelection python3 nvim_matlab_py.run_selection()
 command! -nargs=0 MatlabToggleFile python3 nvim_matlab_py.toggle_file()
 command! -nargs=0 MatlabStartServer python3 nvim_matlab_py.start_matlab_server()
 command! -nargs=0 MatlabStopServer python3 nvim_matlab_py.stop_matlab_server()
-command! -nargs=0 MatlabStatus python3 nvim_matlab_py.get_matlab_status()
-command! -nargs=0 MatlabToggleDebug python3 nvim_matlab_py.set_debug_mode(not nvim_matlab_py.debug_mode)
+command! -nargs=0 MatlabToggleWindow python3 nvim_matlab_py.toggle_matlab_window()
+
+" Mapeos de teclas predeterminados
+if !exists('g:matlab_disable_default_mappings') || !g:matlab_disable_default_mappings
+  nnoremap <silent> <leader>rr :MatlabRun<CR>
+  nnoremap <silent> <leader>rc :MatlabRunCell<CR>
+  nnoremap <silent> <leader>rl :MatlabRunLine<CR>
+  vnoremap <silent> <leader>rs :MatlabRunSelection<CR>
+  nnoremap <silent> <leader>mt :MatlabToggleFile<CR>
+  nnoremap <silent> <leader>ms :MatlabStartServer<CR>
+  nnoremap <silent> <leader>mq :MatlabStopServer<CR>
+  nnoremap <silent> <leader>mw :MatlabToggleWindow<CR>
+endif
 
 " Inicializar el plugin
 call s:init_python()
